@@ -1,5 +1,6 @@
 package voronoi.fortunes_algorithm;
 
+import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 /**
@@ -11,9 +12,19 @@ import java.util.PriorityQueue;
  */
 public class FortunesAlgorithm {
 	/**
-	 * The sites that need to be considered.
+	 * The events that need to be considered.
 	 */
-	public PriorityQueue<Site> sites;
+	private PriorityQueue<Event> events;
+	
+	/**
+	 * The sites that have been made.
+	 */
+	private ArrayList<Site> sites;
+	
+	/**
+	 * The binary tree for the beach line.
+	 */
+	private BinaryTree<Event> beach_line_tree;
 	
 	/**
 	 * This creates a new instance of the Fortune's algorithm wrapper, which will generate a set of Sites for itself within the given bounds
@@ -26,11 +37,30 @@ public class FortunesAlgorithm {
 	 */
 	public FortunesAlgorithm(int min_x, int min_y, int max_x, int max_y, int number) {
 		// Set up the data stores
-		this.sites = new PriorityQueue<Site>(number, new SitesPriorityComparator());
+		this.events = new PriorityQueue<Event>(number, new EventPriorityComparator());
+		this.sites = new ArrayList<Site>(number);
 		
 		// Make the number of sites needed
+		Site s;
 		for(int i = 0; i < number; i++) {
-			this.sites.offer(new Site(min_x, min_y, max_x, max_y, this.sites));
+			s = new Site(min_x, min_y, max_x, max_y, this.sites);
+			this.events.offer(s);
+			this.sites.add(s);
 		}
+		
+		// We now have a series of points that have been ordered correctly.
+		// Start processing the events
+		Event event;
+		while(!events.isEmpty()) {
+			// Look at the top of the sites queue and the top of the circles queue
+			event = events.poll();
+			beach_line_tree = event.process(beach_line_tree);
+		}
+		
+		// Clean up
+	}
+	
+	public ArrayList<Site> sites() {
+		return this.sites;
 	}
 }

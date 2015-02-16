@@ -29,9 +29,9 @@ public class Voronoi extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		for(Site s : fa.sites) {
+		for(Site s : fa.sites()) {
 			batch.begin();
-			batch.draw(img, s.location()[0], s.location()[1]);
+			batch.draw(img, s.location().x, s.location().y);
 			batch.end();
 		}
 	}
